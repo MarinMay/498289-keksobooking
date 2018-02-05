@@ -115,33 +115,41 @@ function renderPin(obj) {
 
 // выводит тип жилья
 function getHouseType(type) {
-  if (type === 'flat') {
-    return 'Квартира';
-  } else if (type === 'bungalo') {
-    return 'Бунгало';
-  } else if (type === 'house') {
-    return 'Дом';
+  var houseType = '';
+  switch (type) {
+    case 'flat':
+      houseType = 'Квартира';
+      break;
+    case 'bungalo':
+      houseType = 'Бунгало';
+      break;
+    case 'house':
+      houseType = 'Дом';
+      break;
   }
+  return houseType;
 }
 
 // разделяет цену по разрядам
 function slicePrice(price) {
+  var housePrice = 0;
   var priseString = price + '';
   var hundred;
   var thousand;
   var millions;
   if (priseString.length <= 3) {
-    return priseString;
+    housePrice = priseString;
   } else if (priseString.length <= 6) {
     thousand = priseString.slice(-6, -3);
     hundred = priseString.slice(-3);
-    return thousand + ' ' + hundred;
+    housePrice = thousand + ' ' + hundred;
   } else if (priseString.length > 6) {
     millions = priseString.slice(-7, -6);
     thousand = priseString.slice(-6, -3);
     hundred = priseString.slice(-3);
-    return millions + ' ' + thousand + ' ' + hundred;
+    housePrice = millions + ' ' + thousand + ' ' + hundred;
   }
+  return housePrice;
 }
 
 // создаем массив с объявлениями
