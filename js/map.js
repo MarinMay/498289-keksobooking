@@ -35,6 +35,7 @@ var FEATURES = [
 var ADVERT_COUNT = 8;
 var WIDTH_PIN = 50;
 var HEIGHT_PIN = 70;
+var ESC_KEYCODE = 27;
 
 // сортирует массив в случайном порядке
 function sortArray(array) {
@@ -103,12 +104,13 @@ function createAdverts(count) {
   }
 }
 
-function renderPin(obj) {
+function renderPin(obj, number) {
   var pin = pinTemplate.cloneNode(true);
   var leftCoordinate = obj.location.x - WIDTH_PIN / 2;
   var topCoordinate = obj.location.y - HEIGHT_PIN;
   pin.style.left = leftCoordinate + 'px';
   pin.style.top = topCoordinate + 'px';
+  pin.id = number;
   pin.querySelector('img').src = obj.autor.avatar;
   return pin;
 }
@@ -152,64 +154,132 @@ function slicePrice(price) {
   return housePrice;
 }
 
+// добавляет атрибут disabled полям формы
+function addFormDisabled() {
+  for (var i = 0; i < fieldets.length; i++) {
+    fieldets[i].disabled = true;
+  }
+}
+
+// удаляет атрибут disabled полям формы
+function removeFormDisabled() {
+  for (var i = 0; i < fieldets.length; i++) {
+    fieldets[i].disabled = false;
+  }
+}
+
+// добавляет карточку с данными в DOM
+function addCardOnMap(advertItem) {
+  // создаем фрагмент с объявлением
+  var advertData = advertItem;
+  var advertElement = mapCardTemplate.cloneNode(true);
+  var puctureList = advertElement.querySelector('.popup__pictures');
+  var puctureItem = advertElement.querySelector('.popup__pictures li');
+
+  // подставляем нужную информацию в шаблон
+  advertElement.querySelector('h3').textContent = advertData.offer.title;
+  advertElement.querySelector('small').textContent = advertData.offer.address;
+  advertElement.querySelector('.popup__price').innerHTML = slicePrice(advertData.offer.price) + ' &#x20bd;' + ' /ночь';
+  advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
+  advertElement.querySelectorAll('p')[2].textContent = advertData.offer.rooms + ' комнаты для ' + advertData.offer.guests + ' гостей';
+  advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertData.offer.checkin + ', выезд до ' + advertData.offer.checkout;
+  advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
+  var featuresList = advertElement.querySelector('.popup__features');
+  // удаляет лишние иконки features
+  for (var j = 5; j >= advertData.offer.features.length; j--) {
+    featuresList.removeChild(featuresList.children[j]);
+  }
+  advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
+  advertElement.querySelector('.popup__avatar').src = advertData.autor.avatar;
+
+  // создаем фрагмент с фото
+  for (var k = 0; k < advertData.offer.photos.length; k++) {
+    var puctureItemElement = puctureItem.cloneNode(true);
+    var puctureItemImg = puctureItemElement.querySelector('img');
+    puctureItemImg.src = advertData.offer.photos[k];
+    puctureItemImg.width = 90;
+    puctureItemImg.height = 90;
+    puctureList.appendChild(puctureItemElement);
+  }
+
+  // удаляем первый пустой пункт спика
+  puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
+
+  // вставляем объявление в DOM
+  map.insertBefore(advertElement, mapFilter);
+}
+
+// удаляет поп-ап
+function removePopup() {
+  var card = document.querySelector('.map__card');
+  map.removeChild(card);
+  document.removeEventListener('keydown', onPopupPressEcs);
+}
+
+// нажатие ECS закрывает поп-ап
+function onPopupPressEcs(evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    removePopup();
+  }
+}
+
+
 // создаем массив с объявлениями
 var adverts = [];
 createAdverts(ADVERT_COUNT);
 
 var map = document.querySelector('.map');
+var mainPin = document.querySelector('.map__pin--main');
 var template = document.querySelector('template').content;
 var pinTemplate = template.querySelector('.map__pin');
 var mapPins = document.querySelector('.map__pins');
 var mapCardTemplate = template.querySelector('.map__card');
 var mapFilter = document.querySelector('.map__filters-container');
+var form = document.querySelector('.notice__form');
+var fieldets = document.querySelectorAll('.form__element');
 
+// добавляем полям формы атрибут disabled
+addFormDisabled();
 
-map.classList.remove('map--faded');
-
+// создаем фрагмент для пинов
 var fragment = document.createDocumentFragment();
 
 // добавляет пины во фрагмент
 for (var i = 0; i < adverts.length; i++) {
-  fragment.appendChild(renderPin(adverts[i]));
+  fragment.appendChild(renderPin(adverts[i], i));
 }
 
-// добавляем пины в DOM
-mapPins.appendChild(fragment);
+// переводим карту и форму в активное состояние
+mainPin.addEventListener('mouseup', function () {
+  map.classList.remove('map--faded');
+  form.classList.remove('notice__form--disabled');
+  removeFormDisabled();
 
-// создаем фрагмент с объявлением
-var advertElement = mapCardTemplate.cloneNode(true);
-var advertData = adverts[0];
-var puctureList = advertElement.querySelector('.popup__pictures');
-var puctureItem = advertElement.querySelector('.popup__pictures li');
+  // добавляем пины в DOM
+  mapPins.appendChild(fragment);
 
-// подставляем нужную информацию в шаблон
-advertElement.querySelector('h3').textContent = advertData.offer.title;
-advertElement.querySelector('small').textContent = advertData.offer.address;
-advertElement.querySelector('.popup__price').innerHTML = slicePrice(advertData.offer.price) + ' &#x20bd;' + ' /ночь';
-advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
-advertElement.querySelectorAll('p')[2].textContent = advertData.offer.rooms + ' комнаты для ' + advertData.offer.guests + ' гостей';
-advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertData.offer.checkin + ', выезд до ' + advertData.offer.checkout;
-advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
-var featuresList = advertElement.querySelector('.popup__features');
-// удаляет лишние иконки features
-for (var j = 5; j >= advertData.offer.features.length; j--) {
-  featuresList.removeChild(featuresList.children[j]);
-}
-advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
-advertElement.querySelector('.popup__avatar').src = advertData.autor.avatar;
+  // находим все пины
+  var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+  // навешиваем обработчик кликов на пин
+  for (var l = 0; l < pins.length; l++) {
+    pins[l].addEventListener('click', function (evt) {
+      if (evt.currentTarget.tagName === 'BUTTON') {
+        // если карточка открыта - закрываем
+        var card = document.querySelector('.map__card');
+        if (card) {
+          removePopup();
+        }
 
-// создаем фрагмент с фото
-for (var k = 0; k < advertData.offer.photos.length; k++) {
-  var puctureItemElement = puctureItem.cloneNode(true);
-  var puctureItemImg = puctureItemElement.querySelector('img');
-  puctureItemImg.src = advertData.offer.photos[k];
-  puctureItemImg.width = 90;
-  puctureItemImg.height = 90;
-  puctureList.appendChild(puctureItemElement);
-}
+        // добавляем объявление
+        var index = evt.currentTarget.id;
+        addCardOnMap(adverts[index]);
 
-// удаляем первый пустой пункт спика
-puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
-
-// вставляем объявление в DOM
-map.insertBefore(advertElement, mapFilter);
+        var buttonClose = document.querySelector('.popup__close');
+        buttonClose.addEventListener('click', function () {
+          removePopup();
+        });
+        document.addEventListener('keydown', onPopupPressEcs);
+      }
+    });
+  }
+});
