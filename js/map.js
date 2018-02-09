@@ -104,14 +104,14 @@ function createAdverts(count) {
   }
 }
 
-function renderPin(obj, number) {
+function renderPin(advertObj, advertId) {
   var pin = pinTemplate.cloneNode(true);
-  var leftCoordinate = obj.location.x - WIDTH_PIN / 2;
-  var topCoordinate = obj.location.y - HEIGHT_PIN;
+  var leftCoordinate = advertObj.location.x - WIDTH_PIN / 2;
+  var topCoordinate = advertObj.location.y - HEIGHT_PIN;
   pin.style.left = leftCoordinate + 'px';
   pin.style.top = topCoordinate + 'px';
-  pin.id = number;
-  pin.querySelector('img').src = obj.autor.avatar;
+  pin.id = advertId;
+  pin.querySelector('img').src = advertObj.autor.avatar;
   return pin;
 }
 
@@ -186,17 +186,17 @@ function addCardOnMap(advertItem) {
   advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
   var featuresList = advertElement.querySelector('.popup__features');
   // удаляет лишние иконки features
-  for (var j = 5; j >= advertData.offer.features.length; j--) {
-    featuresList.removeChild(featuresList.children[j]);
+  for (var i = 5; i >= advertData.offer.features.length; i--) {
+    featuresList.removeChild(featuresList.children[i]);
   }
   advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
   advertElement.querySelector('.popup__avatar').src = advertData.autor.avatar;
 
   // создаем фрагмент с фото
-  for (var k = 0; k < advertData.offer.photos.length; k++) {
+  for (var j = 0; j < advertData.offer.photos.length; j++) {
     var puctureItemElement = puctureItem.cloneNode(true);
     var puctureItemImg = puctureItemElement.querySelector('img');
-    puctureItemImg.src = advertData.offer.photos[k];
+    puctureItemImg.src = advertData.offer.photos[j];
     puctureItemImg.width = 90;
     puctureItemImg.height = 90;
     puctureList.appendChild(puctureItemElement);
@@ -222,7 +222,6 @@ function onPopupPressEcs(evt) {
     removePopup();
   }
 }
-
 
 // создаем массив с объявлениями
 var adverts = [];
@@ -261,8 +260,8 @@ mainPin.addEventListener('mouseup', function () {
   // находим все пины
   var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
   // навешиваем обработчик кликов на пин
-  for (var l = 0; l < pins.length; l++) {
-    pins[l].addEventListener('click', function (evt) {
+  for (var i = 0; i < pins.length; i++) {
+    pins[i].addEventListener('click', function (evt) {
       if (evt.currentTarget.tagName === 'BUTTON') {
         // если карточка открыта - закрываем
         var card = document.querySelector('.map__card');
