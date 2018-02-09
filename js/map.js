@@ -260,8 +260,8 @@ mainPin.addEventListener('mouseup', function () {
   // находим все пины
   var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
   // навешиваем обработчик кликов на пин
-  for (var i = 0; i < pins.length; i++) {
-    pins[i].addEventListener('click', function (evt) {
+  for (var j = 0; j < pins.length; j++) {
+    pins[j].addEventListener('click', function (evt) {
       if (evt.currentTarget.tagName === 'BUTTON') {
         // если карточка открыта - закрываем
         var card = document.querySelector('.map__card');
