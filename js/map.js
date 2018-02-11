@@ -236,7 +236,6 @@ var mapCardTemplate = template.querySelector('.map__card');
 var mapFilter = document.querySelector('.map__filters-container');
 var form = document.querySelector('.notice__form');
 var fieldets = document.querySelectorAll('.form__element');
-var address = document.querySelector('#address');
 
 // добавляем полям формы атрибут disabled
 addFormDisabled();
