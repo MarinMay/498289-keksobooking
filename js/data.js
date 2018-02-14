@@ -34,58 +34,25 @@
 
   var ADVERT_COUNT = 8;
 
-  // сортирует массив в случайном порядке
-  function sortArray(array) {
-    var m = array.length;
-    var t;
-    var i;
-    while (m) {
-      i = Math.floor(Math.random() * m--);
-      t = array[m];
-      array[m] = array[i];
-      array[i] = t;
-    }
-  }
-
-  // выбирает случайный пункт из массива
-  function getElem(array) {
-    return array[Math.floor(Math.random() * array.length)];
-  }
-
-  // выбирает массив случайной длины
-  function getaRandomLengthArray(array) {
-    var newArray = [];
-    var newLength = Math.floor(Math.random() * (array.length));
-    for (var i = 0; i < newLength; i++) {
-      newArray[i] = array[i];
-    }
-    return newArray;
-  }
-
-  // выбирает число в заданном диапазоне
-  function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   // конструктор объявления
   function Advert(avatar, title, type, time, features, photo) {
     this.autor = {
       avatar: 'img/avatars/user' + avatar + '.png'
     };
     this.location = {
-      x: randomNumber(300, 900),
-      y: randomNumber(150, 500)
+      x: window.util.randomNumber(300, 900),
+      y: window.util.randomNumber(220, 570)
     };
     this.offer = {
       title: title,
       address: this.location.x + ', ' + this.location.y,
-      price: randomNumber(1000, 1000000),
-      type: getElem(type),
-      rooms: randomNumber(1, 5),
-      guests: randomNumber(1, 100),
-      checkin: getElem(time),
-      checkout: getElem(time),
-      features: getaRandomLengthArray(features),
+      price: window.util.randomNumber(1000, 1000000),
+      type: window.util.getElem(type),
+      rooms: window.util.randomNumber(1, 5),
+      guests: window.util.randomNumber(1, 100),
+      checkin: window.util.getElem(time),
+      checkout: window.util.getElem(time),
+      features: window.util.getaRandomLengthArray(features),
       description: '',
       photos: photo
     };
@@ -93,9 +60,8 @@
 
   // создает массив объявлений
   function createAdverts(count) {
-    sortArray(AVATAR_NUMBER);
-    sortArray(OFFER_TITLE);
-    sortArray(PHOTOS);
+    window.util.sortArray(AVATAR_NUMBER);
+    window.util.sortArray(OFFER_TITLE);
     for (var i = 0; i < count; i++) {
       adverts[i] = new Advert(AVATAR_NUMBER[i], OFFER_TITLE[i], TYPE, TIME, FEATURES, PHOTOS);
     }

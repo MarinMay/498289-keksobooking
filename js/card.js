@@ -69,12 +69,13 @@
     puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
 
     // создаем фрагмент с фото
-    for (var j = 0; j < advertData.offer.photos.length; j++) {
+    window.util.sortArray(advertData.offer.photos);
+    for (i = 0; i < advertData.offer.photos.length; i++) {
       var puctureItemElement = puctureItem.cloneNode(true);
       var puctureItemImg = puctureItemElement.querySelector('img');
-      puctureItemImg.src = advertData.offer.photos[j];
-      puctureItemImg.width = 90;
-      puctureItemImg.height = 90;
+      puctureItemImg.src = advertData.offer.photos[i];
+      puctureItemImg.width = 100;
+      puctureItemImg.height = 100;
       puctureList.appendChild(puctureItemElement);
     }
     return advertElement;
