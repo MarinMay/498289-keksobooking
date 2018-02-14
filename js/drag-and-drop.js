@@ -1,16 +1,29 @@
 'use strict';
 var mainPin = document.querySelector('.map__pin--main');
-var minCoords = 150;
-var maxCoords = 500;
+var minCoordsY = 150;
+var maxCoordsY = 500;
+var minCoordsX = 0;
+var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
+
 
 function constraintsY(Ycoord) {
-  if (Ycoord < minCoords) {
-    Ycoord = minCoords;
+  if (Ycoord < minCoordsY) {
+    Ycoord = minCoordsY;
   }
-  if (Ycoord > maxCoords) {
-    Ycoord = maxCoords;
+  if (Ycoord > maxCoordsY) {
+    Ycoord = maxCoordsY;
   }
   return Ycoord;
+}
+
+function constraintsX(Xcoord) {
+  if (Xcoord < minCoordsX) {
+    Xcoord = minCoordsX;
+  }
+  if (Xcoord > maxCoordsX) {
+    Xcoord = maxCoordsX;
+  }
+  return Xcoord;
 }
 
 mainPin.addEventListener('mousedown', function (evt) {
@@ -28,6 +41,7 @@ mainPin.addEventListener('mousedown', function (evt) {
       y: startCoords.y - moveEvt.clientY
     };
     var newY = mainPin.offsetTop - shift.y;
+    var newX = mainPin.offsetLeft - shift.x;
 
     startCoords = {
       x: moveEvt.clientX,
@@ -35,7 +49,7 @@ mainPin.addEventListener('mousedown', function (evt) {
     };
 
     mainPin.style.top = (constraintsY(newY)) + 'px';
-    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+    mainPin.style.left = (constraintsX(newX)) + 'px';
   };
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();

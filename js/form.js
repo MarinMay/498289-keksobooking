@@ -6,7 +6,9 @@
   var timeout = document.querySelector('#timeout');
   var capacity = document.querySelector('#capacity');
   var roomNumber = document.querySelector('#room_number');
+  var address = document.querySelector('#address');
   var submit = document.querySelector('.form__submit');
+  var mainPin = document.querySelector('.map__pin--main');
 
   // изменение минимальной цены в зависимости от типа жилья
   var setMinPrice = function () {
@@ -63,6 +65,8 @@
     }
     return false;
   }
+
+  address.value = mainPin.offsetLeft + ', ' + mainPin.offsetTop;
 
   propertyType.addEventListener('change', function () {
     setMinPrice();
