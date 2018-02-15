@@ -40,14 +40,16 @@
     }
   }
 
+  // проверка что нажатый пин не главный
+  function isNotMainPin(elem) {
+    return elem.classList.contains('map__pin--main') ? false : true;
+  }
+
   function onPinClick(evt) {
     var target = evt.target;
     var targetParent = evt.target.parentNode;
     var isButton = target.tagName === 'BUTTON';
     var isImg = target.tagName === 'IMG';
-    function isNotMainPin(elem) {
-      return elem.classList.contains('map__pin--main') ? false : true;
-    }
 
     if (isButton && isNotMainPin(target)) {
       openAndClosePopup(target);
@@ -55,7 +57,6 @@
     if (isImg && isNotMainPin(targetParent)) {
       openAndClosePopup(targetParent);
     }
-    return;
   }
 
   // удаляет со всех пинов класс map__pin--current
@@ -96,7 +97,7 @@
   }
 
   // навешиваем обработчик кликов на пин
-  mapPins.addEventListener('click', onPinClick, true);
+  mapPins.addEventListener('click', onPinClick);
 
   window.map = {
     startMap: switchToActiveMode
