@@ -276,6 +276,11 @@ textarea:focus
     background-position: 0 -88px;
 }
 
+.map__pin--current:not(.map__pin--main)::after
+{
+    background-position: 0 -88px;
+}
+
 .map__pin:active img
 {
     box-shadow: 0 0 15px 15px rgba(255, 86, 53, .7);

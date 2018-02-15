@@ -1,15 +1,15 @@
 'use strict';
 (function () {
-  var WIDTH_PIN = 50;
   var HEIGHT_PIN = 70;
-
+  var heightAdjustment = HEIGHT_PIN / 2;
   var template = document.querySelector('template').content;
   var pinTemplate = template.querySelector('.map__pin');
 
   function renderPin(advertObj, advertId) {
     var pin = pinTemplate.cloneNode(true);
-    var leftCoordinate = advertObj.location.x - WIDTH_PIN / 2;
-    var topCoordinate = advertObj.location.y - HEIGHT_PIN;
+    var leftCoordinate = advertObj.location.x;
+    var topCoordinate = advertObj.location.y - heightAdjustment;
+
     pin.style.left = leftCoordinate + 'px';
     pin.style.top = topCoordinate + 'px';
     pin.id = advertId;
@@ -17,7 +17,7 @@
     return pin;
   }
 
-  window.pin = function () {
+  function createPin() {
     // создаем фрагмент для пинов
     var fragment = document.createDocumentFragment();
 
@@ -25,7 +25,11 @@
     for (var i = 0; i < window.data.adverts.length; i++) {
       fragment.appendChild(renderPin(window.data.adverts[i], i));
     }
-
     return fragment;
+  }
+
+  window.pin = {
+    createPin: createPin,
+    heightAdjustment: heightAdjustment
   };
 })();

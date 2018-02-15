@@ -33,19 +33,22 @@
   ];
 
   var ADVERT_COUNT = 8;
+  // создаем массив данных с объявлениями для пинов
+  var adverts = [];
 
   // конструктор объявления
-  function Advert(avatar, title, type, time, features, photo) {
-    this.autor = {
+  function createAdvert(avatar, title, type, time, features, photo) {
+    var advert = {};
+    advert.autor = {
       avatar: 'img/avatars/user' + avatar + '.png'
     };
-    this.location = {
+    advert.location = {
       x: window.util.randomNumber(300, 900),
-      y: window.util.randomNumber(220, 570)
+      y: window.util.randomNumber(150, 500)
     };
-    this.offer = {
+    advert.offer = {
       title: title,
-      address: this.location.x + ', ' + this.location.y,
+      address: advert.location.x + ', ' + advert.location.y,
       price: window.util.randomNumber(1000, 1000000),
       type: window.util.getElem(type),
       rooms: window.util.randomNumber(1, 5),
@@ -56,6 +59,8 @@
       description: '',
       photos: photo
     };
+
+    return advert;
   }
 
   // создает массив объявлений
@@ -63,13 +68,11 @@
     window.util.sortArray(AVATAR_NUMBER);
     window.util.sortArray(OFFER_TITLE);
     for (var i = 0; i < count; i++) {
-      adverts[i] = new Advert(AVATAR_NUMBER[i], OFFER_TITLE[i], TYPE, TIME, FEATURES, PHOTOS);
+      adverts[i] = createAdvert(AVATAR_NUMBER[i], OFFER_TITLE[i], TYPE, TIME, FEATURES, PHOTOS);
     }
     return adverts;
   }
 
-  // создаем массив данных с объявлениями для пинов
-  var adverts = [];
   // экспорт данных
   window.data = {
     adverts: createAdverts(ADVERT_COUNT)

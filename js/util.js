@@ -5,6 +5,7 @@
     var m = array.length;
     var t;
     var i;
+
     while (m) {
       i = Math.floor(Math.random() * m--);
       t = array[m];
@@ -22,6 +23,7 @@
   function getaRandomLengthArray(array) {
     var newArray = [];
     var newLength = Math.floor(Math.random() * (array.length));
+
     for (var i = 0; i < newLength; i++) {
       newArray[i] = array[i];
     }

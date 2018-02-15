@@ -2,16 +2,34 @@
 (function () {
   var ESC_KEYCODE = 27;
   var map = document.querySelector('.map');
-  var mainPin = document.querySelector('.map__pin--main');
   var mapPins = document.querySelector('.map__pins');
   var mapFilter = document.querySelector('.map__filters-container');
   var form = document.querySelector('.notice__form');
   var fieldset = document.querySelectorAll('.form__element');
+  var startingChildNodesLength = mapPins.childNodes.length;
+
+  function openAndClosePopup(element) {
+    // если карточка открыта - закрываем
+    var index = element.id;
+    var advertElement = window.card(window.data.adverts[index]);
+    var card = document.querySelector('.map__card');
+
+    if (card) {
+      removePopup();
+    }
+    // вставляем объявление в DOM
+    map.insertBefore(advertElement, mapFilter);
+    element.classList.add('map__pin--current');
+    var buttonClose = document.querySelector('.popup__close');
+    buttonClose.addEventListener('click', removePopup);
+    document.addEventListener('keydown', onPopupPressEcs);
+  }
 
   // удаляет поп-ап
   function removePopup() {
     var card = document.querySelector('.map__card');
     map.removeChild(card);
+    removePinCurrentClass();
     document.removeEventListener('keydown', onPopupPressEcs);
   }
 
@@ -22,24 +40,30 @@
     }
   }
 
-  function openAndClosePopup(element) {
-    // если карточка открыта - закрываем
-    var card = document.querySelector('.map__card');
-    if (card) {
-      removePopup();
+  function onPinClick(evt) {
+    var target = evt.target;
+    var targetParent = evt.target.parentNode;
+    var isButton = target.tagName === 'BUTTON';
+    var isImg = target.tagName === 'IMG';
+    function isNotMainPin(elem) {
+      return elem.classList.contains('map__pin--main') ? false : true;
     }
 
-    // добавляем объявление
-    var index = element.id;
-    var advertElement = window.card(window.data.adverts[index]);
-    // вставляем объявление в DOM
-    map.insertBefore(advertElement, mapFilter);
+    if (isButton && isNotMainPin(target)) {
+      openAndClosePopup(target);
+    }
+    if (isImg && isNotMainPin(targetParent)) {
+      openAndClosePopup(targetParent);
+    }
+    return;
+  }
 
-    var buttonClose = document.querySelector('.popup__close');
-    buttonClose.addEventListener('click', function () {
-      removePopup();
-    });
-    document.addEventListener('keydown', onPopupPressEcs);
+  // удаляет со всех пинов класс map__pin--current
+  function removePinCurrentClass() {
+    var pins = document.querySelectorAll('.map__pin');
+    for (var i = 0; i < pins.length; i++) {
+      pins[i].classList.remove('map__pin--current');
+    }
   }
 
   // добавляет атрибут disabled полям формы
@@ -60,23 +84,21 @@
   addFormDisabled();
 
   // переводим карту и форму в активное состояние
-  mainPin.addEventListener('mouseup', function () {
+  function switchToActiveMode() {
     map.classList.remove('map--faded');
     form.classList.remove('notice__form--disabled');
     removeFormDisabled();
 
     // добавляем пины в DOM
-    mapPins.appendChild(window.pin());
+    if (mapPins.childNodes.length <= startingChildNodesLength) {
+      mapPins.appendChild(window.pin.createPin());
+    }
+  }
 
-    // навешиваем обработчик кликов на пин
-    mapPins.addEventListener('click', function (evt) {
-      if (evt.target.tagName === 'BUTTON' && !evt.target.classList.contains('map__pin--main')) {
-        openAndClosePopup(evt.target);
-      }
-      if (evt.target.tagName === 'IMG' && !evt.target.parentNode.classList.contains('map__pin--main')) {
-        openAndClosePopup(evt.target.parentNode);
-      }
-      return;
-    }, true);
-  });
+  // навешиваем обработчик кликов на пин
+  mapPins.addEventListener('click', onPinClick, true);
+
+  window.map = {
+    startMap: switchToActiveMode
+  };
 })();

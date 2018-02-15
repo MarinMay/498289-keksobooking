@@ -37,40 +37,41 @@
 
   // добавляет сообщение ошибки
   function sendMessage(valid, message) {
-    if (valid) {
-      capacity.setCustomValidity('');
-    } else {
-      capacity.setCustomValidity(message);
-    }
+    var capasitiWithMessage = capacity.setCustomValidity(message);
+    var capasityWithoutMessage = capacity.setCustomValidity('');
+    var isValidationTrue = valid ? capasityWithoutMessage : capasitiWithMessage;
+    return isValidationTrue;
   }
 
   // проверка количества гостей в зависимости от комнат
   function checkValidityCapacity() {
     var isValid = capacity.validity.valid;
-    if (roomNumber.value === '1') {
-      isValid = capacity.value === '1';
-      sendMessage(isValid, 'Для одной комнаты один гость');
-    }
-    if (roomNumber.value === '2') {
-      isValid = capacity.value === '1' || capacity.value === '2';
-      sendMessage(isValid, 'Для двух комнат один или два гостя');
-    }
-    if (roomNumber.value === '3') {
-      isValid = capacity.value === '1' || capacity.value === '2' || capacity.value === '3';
-      sendMessage(isValid, 'Для трех комнат один, два или гостя');
-    }
-    if (roomNumber.value === '100') {
-      isValid = capacity.value === '0';
-      sendMessage(isValid, 'Сто комнат не для гостей');
+
+    switch (roomNumber.value) {
+      case '1':
+        isValid = capacity.value === '1';
+        sendMessage(isValid, 'Для одной комнаты один гость');
+        break;
+      case '2':
+        isValid = capacity.value === '1' || capacity.value === '2';
+        sendMessage(isValid, 'Для двух комнат один или два гостя');
+        break;
+      case '3':
+        isValid = capacity.value === '1' || capacity.value === '2' || capacity.value === '3';
+        sendMessage(isValid, 'Для трех комнат один, два или гостя');
+        break;
+      case '100':
+        isValid = capacity.value === '0';
+        sendMessage(isValid, 'Сто комнат не для гостей');
+        break;
     }
     return false;
   }
 
+  // начальное значение адреса - центр главного пина
   address.value = mainPin.offsetLeft + ', ' + mainPin.offsetTop;
 
-  propertyType.addEventListener('change', function () {
-    setMinPrice();
-  });
+  propertyType.addEventListener('change', setMinPrice);
 
   // синхрониация времени заезда и выезда
   timein.addEventListener('change', function () {
@@ -89,4 +90,8 @@
     checkValidityCapacity();
     setMinPrice();
   });
+
+  window.form = {
+    address: address
+  };
 })();
