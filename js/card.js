@@ -41,13 +41,30 @@
     return housePrice;
   }
 
+  // добавляем фото в объявление
+  function createFragmentPhoto(advertElement, advertData) {
+    var puctureItem = advertElement.querySelector('.popup__pictures li');
+    var puctureList = advertElement.querySelector('.popup__pictures');
+    var photoArray = advertData.offer.photos;
+
+    // удаляем первый пустой пункт спика
+    puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
+    window.util.sortArray(photoArray);
+    for (var i = 0; i < photoArray.length; i++) {
+      var puctureItemElement = puctureItem.cloneNode(true);
+      var puctureItemImg = puctureItemElement.querySelector('img');
+      puctureItemImg.src = photoArray[i];
+      puctureItemImg.width = 100;
+      puctureItemImg.height = 100;
+      puctureList.appendChild(puctureItemElement);
+    }
+  }
+
   // добавляет карточку с данными в DOM
-  window.card = function (advertItem) {
+  function getCard(advertItem) {
     // создаем фрагмент с объявлением
     var advertData = advertItem;
     var advertElement = mapCardTemplate.cloneNode(true);
-    var puctureList = advertElement.querySelector('.popup__pictures');
-    var puctureItem = advertElement.querySelector('.popup__pictures li');
 
     // подставляем нужную информацию в шаблон
     advertElement.querySelector('h3').textContent = advertData.offer.title;
@@ -65,18 +82,10 @@
     advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
     advertElement.querySelector('.popup__avatar').src = advertData.autor.avatar;
 
-    // удаляем первый пустой пункт спика
-    puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
+    createFragmentPhoto(advertElement, advertData);
 
-    // создаем фрагмент с фото
-    for (var j = 0; j < advertData.offer.photos.length; j++) {
-      var puctureItemElement = puctureItem.cloneNode(true);
-      var puctureItemImg = puctureItemElement.querySelector('img');
-      puctureItemImg.src = advertData.offer.photos[j];
-      puctureItemImg.width = 90;
-      puctureItemImg.height = 90;
-      puctureList.appendChild(puctureItemElement);
-    }
     return advertElement;
-  };
+  }
+
+  window.card = getCard;
 })();
