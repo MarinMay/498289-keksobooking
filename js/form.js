@@ -1,7 +1,9 @@
 'use strict';
 (function () {
+  var form = document.querySelector('.notice__form');
   var propertyType = document.querySelector('#type');
   var price = document.querySelector('#price');
+  var title = document.querySelector('#title');
   var timein = document.querySelector('#timein');
   var timeout = document.querySelector('#timeout');
   var capacity = document.querySelector('#capacity');
@@ -9,8 +11,15 @@
   var address = document.querySelector('#address');
   var submit = document.querySelector('.form__submit');
   var mainPin = document.querySelector('.map__pin--main');
+  var mainPinX = mainPin.offsetLeft;
+  var mainPinY = mainPin.offsetTop;
 
   // изменение минимальной цены в зависимости от типа жилья
+  /* «Лачуга» — минимальная цена за ночь 0;
+    «Квартира» — минимальная цена за ночь 1 000;
+    «Дом» — минимальная цена 5 000;
+    «Дворец» — минимальная цена 10 000;
+  */
   function setMinPrice() {
     switch (propertyType.value) {
       case 'flat':
@@ -71,8 +80,36 @@
     }
   }
 
+  function setAddress(x, y) {
+    var addressX;
+    var addressY;
+
+    addressX = x;
+    addressY = y + window.pin.heightAdjustment;
+    address.value = addressX + ', ' + addressY;
+  }
+
+  function onFormSubmit(evt) {
+    onFormReset();
+    evt.preventDefault();
+  }
+
+  function onFormReset() {
+    form.reset();
+    mainPin.style.left = mainPinX + 'px';
+    mainPin.style.top = mainPinY + 'px';
+    setAddress(mainPinX, mainPinY);
+  }
+
+  function validationForm() {
+    if (title.value.length < 30 || title.value.length < 30) {
+      title.style.outline = '2px solid red';
+      return;
+    }
+  }
+
   // начальное значение адреса - центр главного пина
-  address.value = mainPin.offsetLeft + ', ' + mainPin.offsetTop;
+  setAddress(mainPinX, mainPinY);
 
   propertyType.addEventListener('change', setMinPrice);
 
@@ -89,11 +126,13 @@
 
   roomNumber.addEventListener('change', setLimitGuests);
 
-  submit.addEventListener('click', function () {
+  submit.addEventListener('click', function (evt) {
+    validationForm();
     setMinPrice();
+    window.backend.save(onFormSubmit(evt), window.backend.errorHandler, new FormData(form));
   });
 
   window.form = {
-    address: address
+    setAddress: setAddress
   };
 })();

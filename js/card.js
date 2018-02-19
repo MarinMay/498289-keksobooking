@@ -2,6 +2,8 @@
 (function () {
   var template = document.querySelector('template').content;
   var mapCardTemplate = template.querySelector('.map__card');
+
+
   // выводит тип жилья
   function getHouseType(type) {
     var houseType = '';
@@ -49,13 +51,11 @@
 
     // удаляем первый пустой пункт спика
     puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
-    window.util.sortArray(photoArray);
     for (var i = 0; i < photoArray.length; i++) {
       var puctureItemElement = puctureItem.cloneNode(true);
       var puctureItemImg = puctureItemElement.querySelector('img');
       puctureItemImg.src = photoArray[i];
-      puctureItemImg.width = 100;
-      puctureItemImg.height = 100;
+      puctureItemImg.width = 95;
       puctureList.appendChild(puctureItemElement);
     }
   }
@@ -80,7 +80,7 @@
       featuresList.removeChild(featuresList.children[i]);
     }
     advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
-    advertElement.querySelector('.popup__avatar').src = advertData.autor.avatar;
+    advertElement.querySelector('.popup__avatar').src = advertData.author.avatar;
 
     createFragmentPhoto(advertElement, advertData);
 

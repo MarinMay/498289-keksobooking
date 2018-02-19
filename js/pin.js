@@ -13,7 +13,7 @@
     pin.style.left = leftCoordinate + 'px';
     pin.style.top = topCoordinate + 'px';
     pin.id = advertId;
-    pin.querySelector('img').src = advertObj.autor.avatar;
+    pin.querySelector('img').src = advertObj.author.avatar;
     return pin;
   }
 

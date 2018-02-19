@@ -8,6 +8,18 @@
   var fieldset = document.querySelectorAll('.form__element');
   var startingChildNodesLength = mapPins.childNodes.length;
 
+  function addScrollPhotoList() {
+    var photoList = document.querySelector('.popup__pictures');
+    var popup = document.querySelector('.popup');
+
+    console.log(photoList.offsetTop);
+    console.log(photoList.offsetHeight);
+    if (photoList.offsetTop + photoList.offsetHeight > popup.offsetHeight) {
+      photoList.style.overflowY = 'auto';
+      photoList.style.height = popup.offsetHeight - photoList.offsetTop + 'px';
+    }
+  }
+
   function openAndClosePopup(element) {
     // если карточка открыта - закрываем
     var index = element.id;
@@ -53,9 +65,11 @@
 
     if (isButton && isNotMainPin(target)) {
       openAndClosePopup(target);
+      setTimeout(addScrollPhotoList, 100);
     }
     if (isImg && isNotMainPin(targetParent)) {
       openAndClosePopup(targetParent);
+      setTimeout(addScrollPhotoList, 100);
     }
   }
 

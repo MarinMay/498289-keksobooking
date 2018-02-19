@@ -425,7 +425,9 @@ textarea:focus
 
     box-sizing: border-box;
     width: 230px;
+    max-height: 552px;
     padding: 10px 10px 20px;
+    overflow-y: hidden;
 
     border-radius: 5px;
     background: #fff;
@@ -462,6 +464,11 @@ textarea:focus
     display: inline-block;
 
     vertical-align: middle;
+}
+
+.popup__pictures li:nth-child(odd)
+{
+    margin-right: 3px;
 }
 
 .popup__avatar
