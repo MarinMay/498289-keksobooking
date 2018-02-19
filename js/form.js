@@ -103,9 +103,15 @@
 
   function validationForm() {
     if (title.value.length < 30 || title.value.length < 30) {
-      title.style.outline = '2px solid red';
-      return;
+      title.style.border = '3px solid red';
+      return false;
     }
+    setMinPrice();
+    if (!price.value || price.value < price.min) {
+      price.style.border = '3px solid red';
+      return false;
+    }
+    return true;
   }
 
   // начальное значение адреса - центр главного пина
@@ -125,11 +131,21 @@
   setLimitGuests();
 
   roomNumber.addEventListener('change', setLimitGuests);
+  price.addEventListener('change', function () {
+    price.style.border = '';
+  });
+
+  title.addEventListener('change', function () {
+    title.style.border = '';
+  });
 
   submit.addEventListener('click', function (evt) {
     validationForm();
-    setMinPrice();
-    window.backend.save(onFormSubmit(evt), window.backend.errorHandler, new FormData(form));
+    if (!validationForm()) {
+      return;
+    }
+    var formData = new FormData(form);
+    window.backend.save(onFormSubmit(evt), window.backend.errorHandler, formData);
   });
 
   window.form = {

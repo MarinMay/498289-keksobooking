@@ -20,7 +20,11 @@
       var error;
       switch (xhr.status) {
         case 200:
-          onSuccess(xhr.response);
+          if (metod === 'GET') {
+            onSuccess(xhr.response);
+          } else {
+            onSuccess();
+          }
           break;
         case 400:
           error = 'Неверный запрос';
@@ -54,7 +58,7 @@
 
   function errorHandler(errorMessage) {
     var node = document.createElement('div');
-    var button = document.createElement('button')
+    var button = document.createElement('button');
     node.style = 'z-index: 100; text-align: center; background-color: #fff; color: #ff0304; padding: 40px;';
     node.style.position = 'fixed';
     node.style.width = '30vw';

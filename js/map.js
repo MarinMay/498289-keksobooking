@@ -12,8 +12,6 @@
     var photoList = document.querySelector('.popup__pictures');
     var popup = document.querySelector('.popup');
 
-    console.log(photoList.offsetTop);
-    console.log(photoList.offsetHeight);
     if (photoList.offsetTop + photoList.offsetHeight > popup.offsetHeight) {
       photoList.style.overflowY = 'auto';
       photoList.style.height = popup.offsetHeight - photoList.offsetTop + 'px';
