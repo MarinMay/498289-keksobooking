@@ -55,21 +55,23 @@
   function errorHandler(errorMessage) {
     var node = document.createElement('div');
     var button = document.createElement('button')
-    node.style = 'z-index: 100; margin: 20 auto; text-align: center; background-color: #fff; color: #ff0304; padding: 50px;';
+    node.style = 'z-index: 100; text-align: center; background-color: #fff; color: #ff0304; padding: 40px;';
     node.style.position = 'fixed';
     node.style.width = '30vw';
-    node.style.height = '30%';
     node.style.left = '50%';
     node.style.top = '17vw';
     node.style.fontSize = '30px';
-    node.textContent = errorMessage;
+    node.innerHTML = '<p>' + errorMessage + '</p>';
     node.style.borderRadius = '5px';
     node.style.boxShadow = '0 0 100px #000';
     node.style.transform = 'translate(-50%, -50%)';
     document.body.insertAdjacentElement('afterbegin', node);
     button.textContent = 'OK';
-    button.style = 'margin: 50px auto 0; background-color: #098499; color: #fff; padding: 15px; width: 50px;';
+    button.style = 'width: 200px; margin: 20px auto 0; padding: 15px;  color: #fff; background-color: #098499; border: none; border-radius: 3px; cursor: pointer;';
     node.appendChild(button);
+    button.addEventListener('click', function () {
+      document.body.removeChild(node);
+    });
   }
 
   window.backend = {
