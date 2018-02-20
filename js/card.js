@@ -3,7 +3,6 @@
   var template = document.querySelector('template').content;
   var mapCardTemplate = template.querySelector('.map__card');
 
-
   // выводит тип жилья
   function getHouseType(type) {
     var houseType = '';
@@ -51,6 +50,7 @@
 
     // удаляем первый пустой пункт спика
     puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
+    puctureList.style.opacity = 0;
     for (var i = 0; i < photoArray.length; i++) {
       var puctureItemElement = puctureItem.cloneNode(true);
       var puctureItemImg = puctureItemElement.querySelector('img');

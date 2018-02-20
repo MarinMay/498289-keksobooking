@@ -22,8 +22,6 @@
         case 200:
           if (metod === 'GET') {
             onSuccess(xhr.response);
-          } else {
-            onSuccess();
           }
           break;
         case 400:

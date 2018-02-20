@@ -10,6 +10,7 @@
   var roomNumber = document.querySelector('#room_number');
   var address = document.querySelector('#address');
   var submit = document.querySelector('.form__submit');
+  var reset = document.querySelector('.form__reset');
   var mainPin = document.querySelector('.map__pin--main');
   var mainPinX = mainPin.offsetLeft;
   var mainPinY = mainPin.offsetTop;
@@ -89,29 +90,41 @@
     address.value = addressX + ', ' + addressY;
   }
 
-  function onFormSubmit(evt) {
-    onFormReset();
-    evt.preventDefault();
-  }
-
-  function onFormReset() {
-    form.reset();
-    mainPin.style.left = mainPinX + 'px';
-    mainPin.style.top = mainPinY + 'px';
-    setAddress(mainPinX, mainPinY);
-  }
-
   function validationForm() {
     if (title.value.length < 30 || title.value.length < 30) {
       title.style.border = '3px solid red';
+      title.addEventListener('change', function () {
+        title.style.border = '';
+      });
       return false;
     }
     setMinPrice();
     if (!price.value || price.value < price.min) {
       price.style.border = '3px solid red';
+      price.addEventListener('change', function () {
+        price.style.border = '';
+      });
       return false;
     }
     return true;
+  }
+
+  function onFormReset(evt) {
+    evt.preventDefault();
+    form.reset();
+    mainPin.style.left = mainPinX + 'px';
+    mainPin.style.top = mainPinY + 'px';
+    setAddress(mainPinX, mainPinY);
+    window.map.disableActiveMode();
+  }
+
+  function onFormSubmit(evt) {
+    validationForm();
+    if (!validationForm()) {
+      return;
+    }
+    var formData = new FormData(form);
+    window.backend.save(onFormReset(evt), window.backend.errorHandler, formData);
   }
 
   // начальное значение адреса - центр главного пина
@@ -123,29 +136,20 @@
   timein.addEventListener('change', function () {
     timeout.value = timein.value;
   });
-
   timeout.addEventListener('change', function () {
     timein.value = timeout.value;
   });
 
+  // валидация числа гостей
   setLimitGuests();
-
   roomNumber.addEventListener('change', setLimitGuests);
-  price.addEventListener('change', function () {
-    price.style.border = '';
-  });
-
-  title.addEventListener('change', function () {
-    title.style.border = '';
-  });
 
   submit.addEventListener('click', function (evt) {
-    validationForm();
-    if (!validationForm()) {
-      return;
-    }
-    var formData = new FormData(form);
-    window.backend.save(onFormSubmit(evt), window.backend.errorHandler, formData);
+    onFormSubmit(evt);
+  });
+
+  reset.addEventListener('click', function (evt) {
+    onFormReset(evt);
   });
 
   window.form = {

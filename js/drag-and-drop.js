@@ -6,6 +6,7 @@
   var minCoordsX = 0;
   var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
 
+  // проверка ограничения координат
   function constraintsY(Ycoord) {
     if (Ycoord < minCoordsY) {
       Ycoord = minCoordsY;

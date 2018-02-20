@@ -427,7 +427,6 @@ textarea:focus
     width: 230px;
     max-height: 552px;
     padding: 10px 10px 20px;
-    overflow-y: hidden;
 
     border-radius: 5px;
     background: #fff;
