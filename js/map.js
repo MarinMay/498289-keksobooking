@@ -62,11 +62,11 @@
 
     if (isButton && isNotMainPin(target)) {
       openAndClosePopup(target);
-      setTimeout(addScrollPhotoList, 10);
+      setTimeout(addScrollPhotoList, 15);
     }
     if (isImg && isNotMainPin(targetParent)) {
       openAndClosePopup(targetParent);
-      setTimeout(addScrollPhotoList, 10);
+      setTimeout(addScrollPhotoList, 15);
     }
   }
 
