@@ -5,6 +5,7 @@
   var template = document.querySelector('template').content;
   var pinTemplate = template.querySelector('.map__pin');
 
+  // создает пин из шаблона
   function renderPin(advertObj, advertId) {
     var pin = pinTemplate.cloneNode(true);
     var leftCoordinate = advertObj.location.x;
@@ -13,11 +14,12 @@
     pin.style.left = leftCoordinate + 'px';
     pin.style.top = topCoordinate + 'px';
     pin.id = advertId;
-    pin.querySelector('img').src = advertObj.autor.avatar;
+    pin.querySelector('img').src = advertObj.author.avatar;
     return pin;
   }
 
-  function createPin() {
+  // добавляет пины во фрагмент
+  function createPinsFragment() {
     // создаем фрагмент для пинов
     var fragment = document.createDocumentFragment();
 
@@ -29,7 +31,7 @@
   }
 
   window.pin = {
-    createPin: createPin,
+    createPinsFragment: createPinsFragment,
     heightAdjustment: heightAdjustment
   };
 })();

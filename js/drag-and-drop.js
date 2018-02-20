@@ -6,6 +6,7 @@
   var minCoordsX = 0;
   var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
 
+  // проверка ограничения координат
   function constraintsY(Ycoord) {
     if (Ycoord < minCoordsY) {
       Ycoord = minCoordsY;
@@ -26,16 +27,7 @@
     return Xcoord;
   }
 
-  function setAddress(x, y) {
-    var addressX;
-    var addressY;
-
-    addressX = x;
-    addressY = y + window.pin.heightAdjustment;
-    window.form.address.value = addressX + ', ' + addressY;
-  }
-
-  function onMouseDown(evt) {
+  function onMainPinMouseDown(evt) {
     evt.preventDefault();
     var startCoords = {
       x: evt.clientX,
@@ -59,7 +51,7 @@
       mainPin.style.top = (constraintsY(newY)) + 'px';
       mainPin.style.left = (constraintsX(newX)) + 'px';
 
-      setAddress(constraintsX(newX), constraintsY(newY));
+      window.form.setAddress(constraintsX(newX), constraintsY(newY));
     }
 
     function onMouseUp(upEvt) {
@@ -73,5 +65,5 @@
     document.addEventListener('mouseup', onMouseUp);
   }
 
-  mainPin.addEventListener('mousedown', onMouseDown);
+  mainPin.addEventListener('mousedown', onMainPinMouseDown);
 })();
