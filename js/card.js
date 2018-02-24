@@ -3,61 +3,67 @@
   var template = document.querySelector('template').content;
   var mapCardTemplate = template.querySelector('.map__card');
 
+  var houseTypeObj = {
+    flat: 'Квартира',
+    bungalo: 'Бунгало',
+    house: 'Дом'
+  };
+
   // выводит тип жилья
   function getHouseType(type) {
-    var houseType = '';
-    switch (type) {
-      case 'flat':
-        houseType = 'Квартира';
-        break;
-      case 'bungalo':
-        houseType = 'Бунгало';
-        break;
-      case 'house':
-        houseType = 'Дом';
-        break;
-    }
+    var houseType = houseTypeObj[type];
     return houseType;
   }
 
   // разделяет цену по разрядам
   function slicePrice(price) {
-    var housePrice = 0;
-    var priseString = price + '';
-    var hundred;
-    var thousand;
-    var millions;
-    if (priseString.length <= 3) {
-      housePrice = priseString;
-    } else if (priseString.length <= 6) {
-      thousand = priseString.slice(-6, -3);
-      hundred = priseString.slice(-3);
-      housePrice = thousand + ' ' + hundred;
-    } else if (priseString.length > 6) {
-      millions = priseString.slice(-7, -6);
-      thousand = priseString.slice(-6, -3);
-      hundred = priseString.slice(-3);
-      housePrice = millions + ' ' + thousand + ' ' + hundred;
-    }
+    var beginningOfThousand = 3;
+    var beginningOfMillion = 7;
+    var priceString = price + '';
+    var priceArray = priceString.split('');
+    var housePrice;
+
+    priceArray.reverse();
+    priceArray.splice(beginningOfThousand, 0, ' ');
+    priceArray.splice(beginningOfMillion, 0, ' ');
+    priceArray.reverse();
+    housePrice = priceArray.join('');
     return housePrice;
   }
 
-  // добавляем фото в объявление
+  // добавляет фото в объявление
   function createFragmentPhoto(advertElement, advertData) {
-    var puctureItem = advertElement.querySelector('.popup__pictures li');
     var puctureList = advertElement.querySelector('.popup__pictures');
+    var puctureItem = advertElement.querySelector('.popup__pictures li');
     var photoArray = advertData.offer.photos;
 
     // удаляем первый пустой пункт спика
-    puctureList.removeChild(advertElement.querySelector('.popup__pictures li'));
+    puctureList.removeChild(puctureItem);
     puctureList.style.opacity = 0;
-    for (var i = 0; i < photoArray.length; i++) {
+    photoArray.forEach(function (itemPhoto) {
       var puctureItemElement = puctureItem.cloneNode(true);
       var puctureItemImg = puctureItemElement.querySelector('img');
-      puctureItemImg.src = photoArray[i];
+
+      puctureItemImg.src = itemPhoto;
       puctureItemImg.width = 95;
       puctureList.appendChild(puctureItemElement);
-    }
+    });
+  }
+
+  // добавляет иконки в блок features
+  function setFuturesList(parent, data) {
+    var featuresList = parent.querySelector('.popup__features');
+    var dataFeatures = data.offer.features;
+    // удаляет лишние иконки features
+    featuresList.innerHTML = '';
+    dataFeatures.forEach(function (featuresItem) {
+      var itemFeature = document.createElement('li');
+      var classNameItemFeature = 'feature--' + featuresItem;
+
+      itemFeature.classList.add('feature');
+      itemFeature.classList.add(classNameItemFeature);
+      featuresList.appendChild(itemFeature);
+    });
   }
 
   // добавляет карточку с данными в DOM
@@ -74,14 +80,10 @@
     advertElement.querySelectorAll('p')[2].textContent = advertData.offer.rooms + ' комнаты для ' + advertData.offer.guests + ' гостей';
     advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertData.offer.checkin + ', выезд до ' + advertData.offer.checkout;
     advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
-    var featuresList = advertElement.querySelector('.popup__features');
-    // удаляет лишние иконки features
-    for (var i = 5; i >= advertData.offer.features.length; i--) {
-      featuresList.removeChild(featuresList.children[i]);
-    }
     advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
     advertElement.querySelector('.popup__avatar').src = advertData.author.avatar;
 
+    setFuturesList(advertElement, advertData);
     createFragmentPhoto(advertElement, advertData);
 
     return advertElement;

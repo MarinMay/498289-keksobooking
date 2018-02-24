@@ -2,6 +2,7 @@
 (function () {
   var HEIGHT_PIN = 70;
   var heightAdjustment = HEIGHT_PIN / 2;
+  var ADVERT_COUNT = 5;
   var template = document.querySelector('template').content;
   var pinTemplate = template.querySelector('.map__pin');
 
@@ -19,13 +20,15 @@
   }
 
   // добавляет пины во фрагмент
-  function createPinsFragment() {
+  function createPinsFragment(advertData) {
     // создаем фрагмент для пинов
     var fragment = document.createDocumentFragment();
+    var takeNumber = advertData.length > ADVERT_COUNT ? ADVERT_COUNT : advertData.length;
+    window.util.sortArray(advertData);
 
     // добавляет пины во фрагмент
-    for (var i = 0; i < window.data.adverts.length; i++) {
-      fragment.appendChild(renderPin(window.data.adverts[i], i));
+    for (var i = 0; i < takeNumber; i++) {
+      fragment.appendChild(renderPin(advertData[i], i));
     }
     return fragment;
   }

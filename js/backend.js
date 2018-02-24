@@ -3,6 +3,7 @@
   var URL_SAVE = 'https://js.dump.academy/keksobooking';
   var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
 
+  // выполняет запрос на сервер
   function request(metod, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -20,9 +21,7 @@
       var error;
       switch (xhr.status) {
         case 200:
-          if (metod === 'GET') {
-            onSuccess(xhr.response);
-          }
+          onSuccess(xhr.response);
           break;
         case 400:
           error = 'Неверный запрос';

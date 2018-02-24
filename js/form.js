@@ -9,8 +9,8 @@
   var capacity = document.querySelector('#capacity');
   var roomNumber = document.querySelector('#room_number');
   var address = document.querySelector('#address');
-  var submit = document.querySelector('.form__submit');
-  var reset = document.querySelector('.form__reset');
+  var submitButton = document.querySelector('.form__submit');
+  var resetButton = document.querySelector('.form__reset');
   var mainPin = document.querySelector('.map__pin--main');
   var mainPinX = mainPin.offsetLeft;
   var mainPinY = mainPin.offsetTop;
@@ -21,25 +21,16 @@
     «Дом» — минимальная цена 5 000;
     «Дворец» — минимальная цена 10 000;
   */
+  var houseTypeObj = {
+    flat: '1000',
+    bungalo: '0',
+    house: '5000',
+    palace: '10000'
+  };
+
   function setMinPrice() {
-    switch (propertyType.value) {
-      case 'flat':
-        price.setAttribute('min', '1000');
-        price.placeholder = '1000';
-        break;
-      case 'bungalo':
-        price.setAttribute('min', '0');
-        price.placeholder = '0';
-        break;
-      case 'house':
-        price.min = '5000';
-        price.placeholder = '5000';
-        break;
-      case 'palace':
-        price.setAttribute('min', '10000');
-        price.placeholder = '10000';
-        break;
-    }
+    price.setAttribute('min', houseTypeObj[propertyType.value]);
+    price.placeholder = houseTypeObj[propertyType.value];
   }
 
   /* 1 комната — «для 1 гостя»
@@ -81,6 +72,7 @@
     }
   }
 
+  // устанавливает значение адреса в форму
   function setAddress(x, y) {
     var addressX;
     var addressY;
@@ -99,7 +91,7 @@
       return false;
     }
     setMinPrice();
-    if (!price.value || price.value < price.min) {
+    if (!price.value || Number(price.value) < Number(price.min) || Number(price.value) > Number(price.max)) {
       price.style.border = '3px solid red';
       price.addEventListener('change', function () {
         price.style.border = '';
@@ -109,13 +101,18 @@
     return true;
   }
 
-  function onFormReset(evt) {
-    evt.preventDefault();
+  function formReset() {
     form.reset();
     mainPin.style.left = mainPinX + 'px';
     mainPin.style.top = mainPinY + 'px';
     setAddress(mainPinX, mainPinY);
+    setMinPrice();
     window.map.disableActiveMode();
+  }
+
+  function onClickFormReset(evt) {
+    evt.preventDefault();
+    formReset();
   }
 
   function onFormSubmit(evt) {
@@ -124,7 +121,8 @@
       return;
     }
     var formData = new FormData(form);
-    window.backend.save(onFormReset(evt), window.backend.errorHandler, formData);
+    window.backend.save(formReset, window.backend.errorHandler, formData);
+    evt.preventDefault();
   }
 
   // начальное значение адреса - центр главного пина
@@ -144,13 +142,9 @@
   setLimitGuests();
   roomNumber.addEventListener('change', setLimitGuests);
 
-  submit.addEventListener('click', function (evt) {
-    onFormSubmit(evt);
-  });
+  submitButton.addEventListener('click', onFormSubmit);
 
-  reset.addEventListener('click', function (evt) {
-    onFormReset(evt);
-  });
+  resetButton.addEventListener('click', onClickFormReset);
 
   window.form = {
     setAddress: setAddress

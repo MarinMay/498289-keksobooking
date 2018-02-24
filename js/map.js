@@ -7,22 +7,32 @@
   var form = document.querySelector('.notice__form');
   var fieldset = document.querySelectorAll('.form__element');
   var startingChildNodesLength = mapPins.childNodes.length;
+  var advertsData;
 
   // добавляет прокрутку если фото не влазят в карточку
   function addScrollPhotoList() {
     var photoList = document.querySelector('.popup__pictures');
     var popup = document.querySelector('.popup');
+    var img = popup.querySelectorAll('.popup__pictures img');
+    var isPhotoListScroll = false;
 
-    if (photoList.offsetTop + photoList.offsetHeight > popup.offsetHeight) {
-      photoList.style.overflowY = 'auto';
-      photoList.style.height = popup.offsetHeight - photoList.offsetTop + 'px';
-    }
-    photoList.style.opacity = 1;
+    img.forEach(function (element) {
+      element.addEventListener('load', function () {
+        if (!isPhotoListScroll) {
+          if (photoList.offsetTop + photoList.offsetHeight >= popup.offsetHeight) {
+            photoList.style.overflowY = 'auto';
+            isPhotoListScroll = true;
+            photoList.style.height = popup.offsetHeight - photoList.offsetTop + 'px';
+          }
+          photoList.style.opacity = 1;
+        }
+      });
+    });
   }
 
   function openAndClosePopup(element) {
     var index = element.id;
-    var advertElement = window.card(window.data.adverts[index]);
+    var advertElement = window.card(advertsData[index]);
     removePopup();
     // вставляем объявление в DOM
     map.insertBefore(advertElement, mapFilter);
@@ -57,16 +67,16 @@
   function onPinClick(evt) {
     var target = evt.target;
     var targetParent = evt.target.parentNode;
-    var isButton = target.tagName === 'BUTTON';
-    var isImg = target.tagName === 'IMG';
+    var isTargetButton = target.tagName === 'BUTTON';
+    var isTargetImg = target.tagName === 'IMG';
 
-    if (isButton && isNotMainPin(target)) {
+    if (isTargetButton && isNotMainPin(target)) {
       openAndClosePopup(target);
-      setTimeout(addScrollPhotoList, 15);
+      addScrollPhotoList();
     }
-    if (isImg && isNotMainPin(targetParent)) {
+    if (isTargetImg && isNotMainPin(targetParent)) {
       openAndClosePopup(targetParent);
-      setTimeout(addScrollPhotoList, 15);
+      addScrollPhotoList();
     }
   }
 
@@ -92,31 +102,56 @@
     }
   }
 
-
   // переводим карту и форму в активное состояние
   function switchToActiveMode() {
+    advertsData = window.data.adverts;
     map.classList.remove('map--faded');
     form.classList.remove('notice__form--disabled');
     removeFormDisabled();
 
     // добавляем пины в DOM
     if (mapPins.childNodes.length <= startingChildNodesLength) {
-      mapPins.appendChild(window.pin.createPinsFragment());
+      addPinsOnMap(advertsData);
     }
+    // находим все input фильтрации и навешиваем обработчик событий
+    var filterInput = mapFilter.querySelectorAll('input');
+    var filterSelect = mapFilter.querySelectorAll('select');
+
+    filterInput.forEach(function (input) {
+      input.addEventListener('change', filtrationPins);
+    });
+    filterSelect.forEach(function (select) {
+      select.addEventListener('change', filtrationPins);
+    });
+  }
+
+  function filtrationPins() {
+    removePopup();
+    advertsData = window.filter.filteredData();
+    addPinsOnMap(advertsData);
+  }
+
+  function addPinsOnMap(advertData) {
+    removePinsOnMap();
+    mapPins.appendChild(window.pin.createPinsFragment(advertData));
+  }
+
+  function removePinsOnMap() {
+    var pins = document.querySelectorAll('.map__pin');
+    pins.forEach(function (elem) {
+      if (isNotMainPin(elem)) {
+        mapPins.removeChild(elem);
+      }
+    });
   }
 
   // переводит карту и форму  неактивное состояние
   function disableActiveMode() {
-    var pins = document.querySelectorAll('.map__pin');
     map.classList.add('map--faded');
     form.classList.add('notice__form--disabled');
     addFormDisabled();
     removePopup();
-    for (var i = 0; i < pins.length; i++) {
-      if (isNotMainPin(pins[i])) {
-        mapPins.removeChild(pins[i]);
-      }
-    }
+    removePinsOnMap();
   }
 
   // добавляем полям формы атрибут disabled
@@ -127,6 +162,8 @@
 
   window.map = {
     startMap: switchToActiveMode,
-    disableActiveMode: disableActiveMode
+    disableActiveMode: disableActiveMode,
+    addPinsOnMap: addPinsOnMap,
+    removePopup: removePopup
   };
 })();
