@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var DEBOUNCE_INTERVAL = 500; // ms
+  var lastTimeout;
+
   // сортирует массив в случайном порядке
   function sortArray(array) {
     var m = array.length;
@@ -35,11 +38,19 @@
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  function debounce(fun) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
+  }
+
   window.util = {
     sortArray: sortArray,
     getElem: getElem,
     getaRandomLengthArray: getaRandomLengthArray,
-    randomNumber: randomNumber
+    randomNumber: randomNumber,
+    debounce: debounce
   };
 })();
 

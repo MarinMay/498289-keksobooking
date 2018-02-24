@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var form = document.querySelector('.notice__form');
+  var fieldset = document.querySelectorAll('.form__element');
   var propertyType = document.querySelector('#type');
   var price = document.querySelector('#price');
   var title = document.querySelector('#title');
@@ -14,6 +15,28 @@
   var mainPin = document.querySelector('.map__pin--main');
   var mainPinX = mainPin.offsetLeft;
   var mainPinY = mainPin.offsetTop;
+
+  // добавляет табиндекс лейблам чекбоксов
+  function addTabindexLabel(selector) {
+    var labels = document.querySelectorAll(selector);
+    for (var i = 0; i < labels.length; i++) {
+      labels[i].tabIndex = '0';
+    }
+  }
+
+  // добавляет атрибут disabled полям формы
+  function addFormDisabled() {
+    for (var i = 0; i < fieldset.length; i++) {
+      fieldset[i].disabled = true;
+    }
+  }
+
+  // удаляет атрибут disabled полям формы
+  function removeFormDisabled() {
+    for (var i = 0; i < fieldset.length; i++) {
+      fieldset[i].disabled = false;
+    }
+  }
 
   // изменение минимальной цены в зависимости от типа жилья
   /* «Лачуга» — минимальная цена за ночь 0;
@@ -147,6 +170,9 @@
   resetButton.addEventListener('click', onClickFormReset);
 
   window.form = {
-    setAddress: setAddress
+    setAddress: setAddress,
+    addFormDisabled: addFormDisabled,
+    removeFormDisabled: removeFormDisabled,
+    addTabindexLabel: addTabindexLabel
   };
 })();

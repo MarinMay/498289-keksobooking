@@ -66,6 +66,27 @@
     });
   }
 
+  // добавляет прокрутку если фото не влазят в карточку
+  function addScrollPhotoList() {
+    var photoList = document.querySelector('.popup__pictures');
+    var popup = document.querySelector('.popup');
+    var img = popup.querySelectorAll('.popup__pictures img');
+    var isPhotoListScroll = false;
+
+    img.forEach(function (element) {
+      element.addEventListener('load', function () {
+        if (!isPhotoListScroll) {
+          if (photoList.offsetTop + photoList.offsetHeight >= popup.offsetHeight) {
+            photoList.style.overflowY = 'auto';
+            isPhotoListScroll = true;
+            photoList.style.height = popup.offsetHeight - photoList.offsetTop + 'px';
+          }
+          photoList.style.opacity = 1;
+        }
+      });
+    });
+  }
+
   // добавляет карточку с данными в DOM
   function getCard(advertItem) {
     // создаем фрагмент с объявлением
@@ -89,5 +110,8 @@
     return advertElement;
   }
 
-  window.card = getCard;
+  window.card = {
+    getCard: getCard,
+    addScrollPhotoList: addScrollPhotoList
+  };
 })();
