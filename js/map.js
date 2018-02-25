@@ -12,10 +12,10 @@
 
   function openAndClosePopup(element) {
     var index = element.id;
-    var advertElement = window.card.getCard(advertsData[index]);
+    var advertItem = window.card.getCard(advertsData[index]);
     removePopup();
     // вставляем объявление в DOM
-    map.insertBefore(advertElement, mapFilter);
+    map.insertBefore(advertItem, mapFilter);
     element.classList.add('map__pin--current');
     var buttonClose = document.querySelector('.popup__close');
     buttonClose.addEventListener('click', onButtonCloseClick);

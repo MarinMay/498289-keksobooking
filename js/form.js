@@ -168,19 +168,16 @@
   timeout.addEventListener('change', onTimeoutChange);
 
   setLimitGuests();
+  addTabindexLabel('label.feature');
+  addTabindexLabel('label.drop-zone');
 
   roomNumber.addEventListener('change', setLimitGuests);
-
   submitButton.addEventListener('click', onFormSubmit);
-
   resetButton.addEventListener('click', onClickFormReset);
-
-
 
   window.form = {
     setAddress: setAddress,
     addFormDisabled: addFormDisabled,
-    removeFormDisabled: removeFormDisabled,
-    addTabindexLabel: addTabindexLabel
+    removeFormDisabled: removeFormDisabled
   };
 })();
