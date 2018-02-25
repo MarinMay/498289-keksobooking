@@ -1,35 +1,26 @@
 'use strict';
 (function () {
   var ESC_KEYCODE = 27;
+  var ENTER_KEYCODE = 13;
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
   var mapFilter = document.querySelector('.map__filters-container');
   var form = document.querySelector('.notice__form');
-  var fieldset = document.querySelectorAll('.form__element');
   var startingChildNodesLength = mapPins.childNodes.length;
-
-  // добавляет прокрутку если фото не влазят в карточку
-  function addScrollPhotoList() {
-    var photoList = document.querySelector('.popup__pictures');
-    var popup = document.querySelector('.popup');
-
-    if (photoList.offsetTop + photoList.offsetHeight > popup.offsetHeight) {
-      photoList.style.overflowY = 'auto';
-      photoList.style.height = popup.offsetHeight - photoList.offsetTop + 'px';
-    }
-    photoList.style.opacity = 1;
-  }
+  var advertsData;
+  var mainPin = document.querySelector('.map__pin--main');
 
   function openAndClosePopup(element) {
     var index = element.id;
-    var advertElement = window.card(window.data.adverts[index]);
+    var advertItem = window.card.getCard(advertsData[index]);
     removePopup();
     // вставляем объявление в DOM
-    map.insertBefore(advertElement, mapFilter);
+    map.insertBefore(advertItem, mapFilter);
     element.classList.add('map__pin--current');
     var buttonClose = document.querySelector('.popup__close');
-    buttonClose.addEventListener('click', removePopup);
+    buttonClose.addEventListener('click', onButtonCloseClick);
     document.addEventListener('keydown', onPopupPressEcs);
+    window.card.addScrollPhotoList();
   }
 
   // удаляет поп-ап
@@ -42,6 +33,10 @@
     }
   }
 
+  function onButtonCloseClick() {
+    removePopup();
+  }
+
   // нажатие ECS закрывает поп-ап
   function onPopupPressEcs(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -50,23 +45,21 @@
   }
 
   // проверка что нажатый пин не главный
-  function isNotMainPin(elem) {
+  function checkPinNotMain(elem) {
     return elem.classList.contains('map__pin--main') ? false : true;
   }
 
   function onPinClick(evt) {
     var target = evt.target;
     var targetParent = evt.target.parentNode;
-    var isButton = target.tagName === 'BUTTON';
-    var isImg = target.tagName === 'IMG';
+    var isTargetButton = target.tagName === 'BUTTON';
+    var isTargetImg = target.tagName === 'IMG';
 
-    if (isButton && isNotMainPin(target)) {
+    if (isTargetButton && checkPinNotMain(target)) {
       openAndClosePopup(target);
-      setTimeout(addScrollPhotoList, 15);
     }
-    if (isImg && isNotMainPin(targetParent)) {
+    if (isTargetImg && checkPinNotMain(targetParent)) {
       openAndClosePopup(targetParent);
-      setTimeout(addScrollPhotoList, 15);
     }
   }
 
@@ -78,55 +71,77 @@
     }
   }
 
-  // добавляет атрибут disabled полям формы
-  function addFormDisabled() {
-    for (var i = 0; i < fieldset.length; i++) {
-      fieldset[i].disabled = true;
-    }
+  function addPinsOnMap(advertData) {
+    removePinsOnMap();
+    mapPins.appendChild(window.pin.createPinsFragment(advertData));
   }
 
-  // удаляет атрибут disabled полям формы
-  function removeFormDisabled() {
-    for (var i = 0; i < fieldset.length; i++) {
-      fieldset[i].disabled = false;
-    }
+  function removePinsOnMap() {
+    var pins = document.querySelectorAll('.map__pin');
+    pins.forEach(function (elem) {
+      if (checkPinNotMain(elem)) {
+        mapPins.removeChild(elem);
+      }
+    });
   }
 
+  // перерисовывает пины после фильтрации
+  function renderFiltrationPins() {
+    removePopup();
+    advertsData = window.filter.filtersData();
+    addPinsOnMap(advertsData);
+  }
+
+  function onFilterInputChange(evt) {
+    if (evt.target.tagName === 'INPUT' || evt.target.tagName === 'SELECT') {
+      window.util.debounce(renderFiltrationPins);
+    }
+  }
 
   // переводим карту и форму в активное состояние
   function switchToActiveMode() {
+    advertsData = window.data.adverts;
     map.classList.remove('map--faded');
     form.classList.remove('notice__form--disabled');
-    removeFormDisabled();
+    window.form.removeFormDisabled();
 
     // добавляем пины в DOM
     if (mapPins.childNodes.length <= startingChildNodesLength) {
-      mapPins.appendChild(window.pin.createPinsFragment());
+      addPinsOnMap(advertsData);
     }
+    mapFilter.addEventListener('change', onFilterInputChange);
   }
 
   // переводит карту и форму  неактивное состояние
   function disableActiveMode() {
-    var pins = document.querySelectorAll('.map__pin');
     map.classList.add('map--faded');
     form.classList.add('notice__form--disabled');
-    addFormDisabled();
+    window.form.addFormDisabled();
     removePopup();
-    for (var i = 0; i < pins.length; i++) {
-      if (isNotMainPin(pins[i])) {
-        mapPins.removeChild(pins[i]);
-      }
+    removePinsOnMap();
+    mapFilter.removeEventListener('change', onFilterInputChange);
+  }
+
+  function onMainPinPressEnter(evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      switchToActiveMode();
     }
+    mainPin.removeEventListener('keydown', onMainPinPressEnter);
   }
 
   // добавляем полям формы атрибут disabled
-  addFormDisabled();
+  window.form.addFormDisabled();
 
   // навешиваем обработчик кликов на пин
   mapPins.addEventListener('click', onPinClick);
 
+  // перевод в активное состояние какры по нажатию enter
+  mainPin.addEventListener('keydown', onMainPinPressEnter);
+
   window.map = {
     startMap: switchToActiveMode,
-    disableActiveMode: disableActiveMode
+    disableActiveMode: disableActiveMode,
+    addPinsOnMap: addPinsOnMap,
+    removePopup: removePopup
   };
 })();

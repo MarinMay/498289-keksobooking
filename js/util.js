@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var DEBOUNCE_INTERVAL = 500; // ms
+  var lastTimeout;
+
   // сортирует массив в случайном порядке
   function sortArray(array) {
     var m = array.length;
@@ -14,32 +17,16 @@
     }
   }
 
-  // выбирает случайный пункт из массива
-  function getElem(array) {
-    return array[Math.floor(Math.random() * array.length)];
-  }
-
-  // выбирает массив случайной длины
-  function getaRandomLengthArray(array) {
-    var newArray = [];
-    var newLength = Math.floor(Math.random() * (array.length));
-
-    for (var i = 0; i < newLength; i++) {
-      newArray[i] = array[i];
+  function debounce(cb) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
     }
-    return newArray;
-  }
-
-  // выбирает число в заданном диапазоне
-  function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
   }
 
   window.util = {
     sortArray: sortArray,
-    getElem: getElem,
-    getaRandomLengthArray: getaRandomLengthArray,
-    randomNumber: randomNumber
+    debounce: debounce
   };
 })();
 
