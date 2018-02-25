@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var BEGINNING_OF_THOUSAND = 3;
+  var BEGINNING_OF_MILLION = 7;
+  var WIDTH_IMG_HOUSE = 95;
   var template = document.querySelector('template').content;
   var mapCardTemplate = template.querySelector('.map__card');
 
@@ -17,15 +20,13 @@
 
   // разделяет цену по разрядам
   function slicePrice(price) {
-    var beginningOfThousand = 3;
-    var beginningOfMillion = 7;
     var priceString = price + '';
     var priceArray = priceString.split('');
     var housePrice;
 
     priceArray.reverse();
-    priceArray.splice(beginningOfThousand, 0, ' ');
-    priceArray.splice(beginningOfMillion, 0, ' ');
+    priceArray.splice(BEGINNING_OF_THOUSAND, 0, ' ');
+    priceArray.splice(BEGINNING_OF_MILLION, 0, ' ');
     priceArray.reverse();
     housePrice = priceArray.join('');
     return housePrice;
@@ -45,7 +46,7 @@
       var puctureItemImg = puctureItemElement.querySelector('img');
 
       puctureItemImg.src = itemPhoto;
-      puctureItemImg.width = 95;
+      puctureItemImg.width = WIDTH_IMG_HOUSE;
       puctureList.appendChild(puctureItemElement);
     });
   }
@@ -70,10 +71,10 @@
   function addScrollPhotoList() {
     var photoList = document.querySelector('.popup__pictures');
     var popup = document.querySelector('.popup');
-    var img = popup.querySelectorAll('.popup__pictures img');
+    var images = popup.querySelectorAll('.popup__pictures img');
     var isPhotoListScroll = false;
 
-    img.forEach(function (element) {
+    images.forEach(function (element) {
       element.addEventListener('load', function () {
         if (!isPhotoListScroll) {
           if (photoList.offsetTop + photoList.offsetHeight >= popup.offsetHeight) {
@@ -91,23 +92,23 @@
   function getCard(advertItem) {
     // создаем фрагмент с объявлением
     var advertData = advertItem;
-    var advertElement = mapCardTemplate.cloneNode(true);
+    var card = mapCardTemplate.cloneNode(true);
 
     // подставляем нужную информацию в шаблон
-    advertElement.querySelector('h3').textContent = advertData.offer.title;
-    advertElement.querySelector('small').textContent = advertData.offer.address;
-    advertElement.querySelector('.popup__price').innerHTML = slicePrice(advertData.offer.price) + ' &#x20bd;' + ' /ночь';
-    advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
-    advertElement.querySelectorAll('p')[2].textContent = advertData.offer.rooms + ' комнаты для ' + advertData.offer.guests + ' гостей';
-    advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertData.offer.checkin + ', выезд до ' + advertData.offer.checkout;
-    advertElement.querySelector('h4').textContent = getHouseType(advertData.offer.type);
-    advertElement.querySelectorAll('p')[4].textContent = advertData.offer.description;
-    advertElement.querySelector('.popup__avatar').src = advertData.author.avatar;
+    card.querySelector('h3').textContent = advertData.offer.title;
+    card.querySelector('small').textContent = advertData.offer.address;
+    card.querySelector('.popup__price').innerHTML = slicePrice(advertData.offer.price) + ' &#x20bd;' + ' /ночь';
+    card.querySelector('h4').textContent = getHouseType(advertData.offer.type);
+    card.querySelectorAll('p')[2].textContent = advertData.offer.rooms + ' комнаты для ' + advertData.offer.guests + ' гостей';
+    card.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertData.offer.checkin + ', выезд до ' + advertData.offer.checkout;
+    card.querySelector('h4').textContent = getHouseType(advertData.offer.type);
+    card.querySelectorAll('p')[4].textContent = advertData.offer.description;
+    card.querySelector('.popup__avatar').src = advertData.author.avatar;
 
-    setFuturesList(advertElement, advertData);
-    createFragmentPhoto(advertElement, advertData);
+    setFuturesList(card, advertData);
+    createFragmentPhoto(card, advertData);
 
-    return advertElement;
+    return card;
   }
 
   window.card = {

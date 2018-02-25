@@ -1,8 +1,8 @@
 'use strict';
 (function () {
   var HEIGHT_PIN = 70;
-  var heightAdjustment = HEIGHT_PIN / 2;
   var ADVERT_COUNT = 5;
+  var heightAdjustment = HEIGHT_PIN / 2;
   var template = document.querySelector('template').content;
   var pinTemplate = template.querySelector('.map__pin');
 
@@ -24,8 +24,8 @@
     // создаем фрагмент для пинов
     var fragment = document.createDocumentFragment();
     var takeNumber = advertData.length > ADVERT_COUNT ? ADVERT_COUNT : advertData.length;
-    window.util.sortArray(advertData);
 
+    window.util.sortArray(advertData);
     // добавляет пины во фрагмент
     for (var i = 0; i < takeNumber; i++) {
       fragment.appendChild(renderPin(advertData[i], i));

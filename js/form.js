@@ -1,7 +1,9 @@
 'use strict';
 (function () {
+  var MIN_LENGTH_TITLE = 30;
+  var MAX_LENGTH_TITLE = 100;
   var form = document.querySelector('.notice__form');
-  var fieldset = document.querySelectorAll('.form__element');
+  var fieldsets = document.querySelectorAll('.form__element');
   var propertyType = document.querySelector('#type');
   var price = document.querySelector('#price');
   var title = document.querySelector('#title');
@@ -26,15 +28,15 @@
 
   // добавляет атрибут disabled полям формы
   function addFormDisabled() {
-    for (var i = 0; i < fieldset.length; i++) {
-      fieldset[i].disabled = true;
+    for (var i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].disabled = true;
     }
   }
 
   // удаляет атрибут disabled полям формы
   function removeFormDisabled() {
-    for (var i = 0; i < fieldset.length; i++) {
-      fieldset[i].disabled = false;
+    for (var i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].disabled = false;
     }
   }
 
@@ -105,8 +107,8 @@
     address.value = addressX + ', ' + addressY;
   }
 
-  function validationForm() {
-    if (title.value.length < 30 || title.value.length < 30) {
+  function validatesForm() {
+    if (title.value.length < MIN_LENGTH_TITLE || title.value.length > MAX_LENGTH_TITLE) {
       title.style.border = '3px solid red';
       title.addEventListener('change', function () {
         title.style.border = '';
@@ -139,13 +141,22 @@
   }
 
   function onFormSubmit(evt) {
-    validationForm();
-    if (!validationForm()) {
+    validatesForm();
+    if (!validatesForm()) {
       return;
     }
     var formData = new FormData(form);
-    window.backend.save(formReset, window.backend.errorHandler, formData);
+    window.backend.saveForm(formReset, window.backend.errorHandler, formData);
     evt.preventDefault();
+  }
+
+  // синхрониация времени заезда и выезда
+  function onTimeinChange() {
+    timeout.value = timein.value;
+  }
+
+  function onTimeoutChange() {
+    timein.value = timeout.value;
   }
 
   // начальное значение адреса - центр главного пина
@@ -153,21 +164,18 @@
 
   propertyType.addEventListener('change', setMinPrice);
 
-  // синхрониация времени заезда и выезда
-  timein.addEventListener('change', function () {
-    timeout.value = timein.value;
-  });
-  timeout.addEventListener('change', function () {
-    timein.value = timeout.value;
-  });
+  timein.addEventListener('change', onTimeinChange);
+  timeout.addEventListener('change', onTimeoutChange);
 
-  // валидация числа гостей
   setLimitGuests();
+
   roomNumber.addEventListener('change', setLimitGuests);
 
   submitButton.addEventListener('click', onFormSubmit);
 
   resetButton.addEventListener('click', onClickFormReset);
+
+
 
   window.form = {
     setAddress: setAddress,

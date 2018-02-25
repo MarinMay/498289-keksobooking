@@ -1,25 +1,25 @@
 'use strict';
 (function () {
+  var MIN_COORDS_Y = 115;
+  var MAX_COORDS_Y = 465;
+  var MIN_COORDS_X = 0;
   var mainPin = document.querySelector('.map__pin--main');
-  var minCoordsY = 150;
-  var maxCoordsY = 500;
-  var minCoordsX = 0;
   var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
 
   // проверка ограничения координат
-  function constraintsY(Ycoord) {
-    if (Ycoord < minCoordsY) {
-      Ycoord = minCoordsY;
+  function setLimitsY(Ycoord) {
+    if (Ycoord < MIN_COORDS_Y) {
+      Ycoord = MIN_COORDS_Y;
     }
-    if (Ycoord > maxCoordsY) {
-      Ycoord = maxCoordsY;
+    if (Ycoord > MAX_COORDS_Y) {
+      Ycoord = MAX_COORDS_Y;
     }
     return Ycoord;
   }
 
-  function constraintsX(Xcoord) {
-    if (Xcoord < minCoordsX) {
-      Xcoord = minCoordsX;
+  function setLimitsX(Xcoord) {
+    if (Xcoord < MIN_COORDS_X) {
+      Xcoord = MIN_COORDS_X;
     }
     if (Xcoord > maxCoordsX) {
       Xcoord = maxCoordsX;
@@ -48,10 +48,10 @@
         y: moveEvt.clientY
       };
 
-      mainPin.style.top = (constraintsY(newY)) + 'px';
-      mainPin.style.left = (constraintsX(newX)) + 'px';
+      mainPin.style.top = (setLimitsY(newY)) + 'px';
+      mainPin.style.left = (setLimitsX(newX)) + 'px';
 
-      window.form.setAddress(constraintsX(newX), constraintsY(newY));
+      window.form.setAddress(setLimitsX(newX), setLimitsY(newY));
     }
 
     function onMouseUp(upEvt) {

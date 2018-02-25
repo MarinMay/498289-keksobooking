@@ -10,5 +10,5 @@
     };
   }
 
-  window.backend.load(createAdverts, window.backend.errorHandler);
+  window.backend.loadData(createAdverts, window.backend.errorHandler);
 })();

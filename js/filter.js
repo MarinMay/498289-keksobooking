@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var LOW_PRICE = 10000;
+  var HIGH_PRICE = 50000;
   var housingType = document.querySelector('#housing-type');
   var housingPrice = document.querySelector('#housing-price');
   var housingRooms = document.querySelector('#housing-rooms');
@@ -9,40 +11,40 @@
   function checkPrice(priceValue, inputValue) {
     var priceRangeOnInput = {
       'middle': function (price) {
-        return price > 10000 && price < 50000;
+        return price > LOW_PRICE && price < HIGH_PRICE;
       },
       'low': function (price) {
-        return price < 10000;
+        return price < LOW_PRICE;
       },
       'high': function (price) {
-        return price > 50000;
+        return price > HIGH_PRICE;
       }
     };
     return priceRangeOnInput[inputValue](priceValue);
   }
 
   // фильтреут по типу жилья
-  function filterHouse(elem) {
+  function filtersByHouse(elem) {
     return housingType.value === 'any' ? true : elem.offer.type === housingType.value;
   }
 
   // фильтрует по цене
-  function filterPrice(elem) {
+  function filtersByPrice(elem) {
     return housingPrice.value === 'any' ? true : checkPrice(elem.offer.price, housingPrice.value);
   }
 
   // фильтрует по количеству комнат
-  function filterRooms(elem) {
+  function filtersByRooms(elem) {
     return housingRooms.value === 'any' ? true : (elem.offer.rooms + '') === housingRooms.value;
   }
 
   // фильтрует по количеству гостей
-  function filterGuest(elem) {
+  function filtersByGuest(elem) {
     return housingGuests.value === 'any' ? true : (elem.offer.guests + '') === housingGuests.value;
   }
 
   // фильтрует по выбранным чекбоксам features
-  function filterFeatures(elem, inputsChecked) {
+  function filtersByFeatures(elem, inputsChecked) {
     var features = elem.offer.features;
     var isDataTrueOnFeatures = inputsChecked.every(function (elemFeatures) {
       return features.indexOf(elemFeatures) !== -1;
@@ -67,19 +69,19 @@
 
   // получает отфильтрованный массив
   function getFilteredArray(data, inputsChecked) {
-    var filteredArray = data.filter(filterHouse)
-        .filter(filterPrice)
-        .filter(filterRooms)
-        .filter(filterGuest)
+    var filteredArray = data.filter(filtersByHouse)
+        .filter(filtersByPrice)
+        .filter(filtersByRooms)
+        .filter(filtersByGuest)
         .filter(function (elem) {
-          return filterFeatures(elem, inputsChecked);
+          return filtersByFeatures(elem, inputsChecked);
         });
 
     return filteredArray;
   }
 
   // фильтрует данные объявлений
-  function filtration() {
+  function filtersData() {
     var advertsData = window.data.adverts.slice();
     var inputsFeaturesChecked = getFeaturesChecked();
     var filteredArrayAdverts = getFilteredArray(advertsData, inputsFeaturesChecked);
@@ -88,6 +90,6 @@
   }
 
   window.filter = {
-    filteredData: filtration
+    filtersData: filtersData
   };
 })();
