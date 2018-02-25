@@ -46,7 +46,7 @@
     «Дом» — минимальная цена 5 000;
     «Дворец» — минимальная цена 10 000;
   */
-  var houseTypeObj = {
+  var housePrice = {
     flat: '1000',
     bungalo: '0',
     house: '5000',
@@ -54,8 +54,8 @@
   };
 
   function setMinPrice() {
-    price.setAttribute('min', houseTypeObj[propertyType.value]);
-    price.placeholder = houseTypeObj[propertyType.value];
+    price.setAttribute('min', housePrice[propertyType.value]);
+    price.placeholder = housePrice[propertyType.value];
   }
 
   /* 1 комната — «для 1 гостя»

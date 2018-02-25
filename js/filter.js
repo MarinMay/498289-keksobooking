@@ -10,13 +10,13 @@
   // проверяет цену по диапазону
   function checkPrice(priceValue, inputValue) {
     var priceRangeOnInput = {
-      'middle': function (price) {
+      middle: function (price) {
         return price > LOW_PRICE && price < HIGH_PRICE;
       },
-      'low': function (price) {
+      low: function (price) {
         return price < LOW_PRICE;
       },
-      'high': function (price) {
+      high: function (price) {
         return price > HIGH_PRICE;
       }
     };
