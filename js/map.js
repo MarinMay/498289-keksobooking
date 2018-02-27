@@ -92,9 +92,7 @@
       window.form.removeFormDisabled();
 
       // добавляем пины в DOM
-      if (mapPins.childNodes.length <= startingChildNodesLength) {
-        addPinsOnMap(advertsData);
-      }
+      addPinsOnMap(advertsData);
       mapFilter.addEventListener('change', onFilterInputChange);
     }
   }
