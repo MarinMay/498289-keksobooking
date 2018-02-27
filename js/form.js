@@ -3,7 +3,7 @@
   var MIN_LENGTH_TITLE = 30;
   var MAX_LENGTH_TITLE = 100;
   var form = document.querySelector('.notice__form');
-  var fieldsets = document.querySelectorAll('.form__element');
+  var fieldsets = document.querySelectorAll('.notice__form fieldset');
   var propertyType = document.querySelector('#type');
   var price = document.querySelector('#price');
   var title = document.querySelector('#title');
@@ -17,27 +17,29 @@
   var mainPin = document.querySelector('.map__pin--main');
   var mainPinX = mainPin.offsetLeft;
   var mainPinY = mainPin.offsetTop;
+  var avatarPreview = document.querySelector('.notice__preview img');
+  var photoHousePreview = document.querySelector('.form__photo-container');
 
   // добавляет табиндекс лейблам чекбоксов
   function addTabindexLabel(selector) {
     var labels = document.querySelectorAll(selector);
-    for (var i = 0; i < labels.length; i++) {
-      labels[i].tabIndex = '0';
-    }
+    labels.forEach(function (label) {
+      label.tabIndex = '0';
+    });
   }
 
   // добавляет атрибут disabled полям формы
   function addFormDisabled() {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].disabled = true;
-    }
+    fieldsets.forEach(function (fieldset) {
+      fieldset.disabled = true;
+    });
   }
 
   // удаляет атрибут disabled полям формы
   function removeFormDisabled() {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].disabled = false;
-    }
+    fieldsets.forEach(function (fieldset) {
+      fieldset.disabled = false;
+    });
   }
 
   // изменение минимальной цены в зависимости от типа жилья
@@ -63,14 +65,15 @@
   3 комнаты — «для 3 гостей», «для 2 гостей» или «для 1 гостя»
   100 комнат — «не для гостей»*/
   function setLimitGuests() {
-    var capacityThreeGuest = capacity.options[0];
-    var capacityTwoGuest = capacity.options[1];
-    var capacityOneGuest = capacity.options[2];
-    var capacityNoGuest = capacity.options[3];
+    var options = capacity.options;
+    var capacityThreeGuest = options[0];
+    var capacityTwoGuest = options[1];
+    var capacityOneGuest = options[2];
+    var capacityNoGuest = options[3];
 
-    for (var i = 0; i < capacity.options.length; i++) {
-      capacity.options[i].disabled = false;
-    }
+    [].forEach.call(options, (function (option) {
+      option.disabled = false;
+    }));
 
     switch (roomNumber.value) {
       case '1':
@@ -127,6 +130,11 @@
   }
 
   function formReset() {
+    var photoHouse = photoHousePreview.querySelectorAll('img');
+    avatarPreview.src = 'img/muffin.png';
+    photoHouse.forEach(function (image) {
+      photoHousePreview.removeChild(image);
+    });
     form.reset();
     mainPin.style.left = mainPinX + 'px';
     mainPin.style.top = mainPinY + 'px';
@@ -146,7 +154,7 @@
       return;
     }
     var formData = new FormData(form);
-    window.backend.saveForm(formReset, window.backend.errorHandler, formData);
+    window.backend.saveForm(formReset, window.backend.onRequestError, formData);
     evt.preventDefault();
   }
 

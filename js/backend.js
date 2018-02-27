@@ -3,8 +3,14 @@
   var URL_SAVE = 'https://js.dump.academy/keksobooking';
   var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
   var REQUEST_TIMEOUT = 10000;
+  var STATUS_CODE = {
+    ok: 200,
+    badRequest: 400,
+    notFound: 404
+  };
+
   // выполняет запрос на сервер
-  function request(metod, url, onSuccess, onError, data) {
+  function executeRequest(metod, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -20,16 +26,13 @@
     xhr.addEventListener('load', function () {
       var error;
       switch (xhr.status) {
-        case 200:
+        case STATUS_CODE.ok:
           onSuccess(xhr.response);
           break;
-        case 400:
+        case STATUS_CODE.badRequest:
           error = 'Неверный запрос';
           break;
-        case 401:
-          error = 'Пользователь не авторизован';
-          break;
-        case 404:
+        case STATUS_CODE.notFound:
           error = 'Ничего не найдено';
           break;
         default:
@@ -46,14 +49,14 @@
   }
 
   function saveForm(onSuccess, onError, data) {
-    request('POST', URL_SAVE, onSuccess, onError, data);
+    executeRequest('POST', URL_SAVE, onSuccess, onError, data);
   }
 
   function loadData(onSuccess, onError) {
-    request('GET', URL_LOAD, onSuccess, onError);
+    executeRequest('GET', URL_LOAD, onSuccess, onError);
   }
 
-  function errorHandler(errorMessage) {
+  function onRequestError(errorMessage) {
     var node = document.createElement('div');
     var button = document.createElement('button');
     document.body.insertAdjacentElement('afterbegin', node);
@@ -78,6 +81,6 @@
   window.backend = {
     saveForm: saveForm,
     loadData: loadData,
-    errorHandler: errorHandler
+    onRequestError: onRequestError
   };
 })();
