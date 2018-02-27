@@ -7,6 +7,7 @@
   var photoHousePreview = document.querySelector('.form__photo-container');
   var avatarDropZone = document.querySelector('.notice__header .drop-zone');
   var photoHouseDropZone = photoHousePreview.querySelector('.drop-zone');
+  var draggedItem = null;
 
   // проверка формата файлов
   function mutchesNameFiles(name) {
@@ -71,7 +72,6 @@
     }));
   }
 
-  var draggedItem = null;
 
   function photoHouseDragStart(evt) {
     if (evt.target.tagName === 'IMG') {
