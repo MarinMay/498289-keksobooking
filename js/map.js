@@ -9,6 +9,8 @@
   var startingChildNodesLength = mapPins.childNodes.length;
   var advertsData;
   var mainPin = document.querySelector('.map__pin--main');
+  // проверка в каком состоянии карта
+  var isMapActive = false;
 
   function openAndClosePopup(element) {
     var index = element.id;
@@ -27,8 +29,9 @@
   function removePopup() {
     var card = document.querySelector('.map__card');
     if (card) {
+      var currentPin = document.querySelector('.map__pin--current');
+      currentPin.classList.remove('map__pin--current');
       map.removeChild(card);
-      removePinCurrentClass();
       document.removeEventListener('keydown', onPopupPressEcs);
     }
   }
@@ -44,44 +47,25 @@
     }
   }
 
-  // проверка что нажатый пин не главный
-  function checkPinNotMain(elem) {
-    return elem.classList.contains('map__pin--main') ? false : true;
-  }
-
   function onPinClick(evt) {
-    var target = evt.target;
-    var targetParent = evt.target.parentNode;
-    var isTargetButton = target.tagName === 'BUTTON';
-    var isTargetImg = target.tagName === 'IMG';
-
-    if (isTargetButton && checkPinNotMain(target)) {
-      openAndClosePopup(target);
-    }
-    if (isTargetImg && checkPinNotMain(targetParent)) {
-      openAndClosePopup(targetParent);
-    }
-  }
-
-  // удаляет со всех пинов класс map__pin--current
-  function removePinCurrentClass() {
-    var pins = document.querySelectorAll('.map__pin');
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].classList.remove('map__pin--current');
+    var pin = evt.target.closest('.map__pin:not(.map__pin--main)');
+    if (pin) {
+      openAndClosePopup(pin);
     }
   }
 
   function addPinsOnMap(advertData) {
-    removePinsOnMap();
+    // проверка, что пины на карте есть
+    if (mapPins.childNodes.length > startingChildNodesLength) {
+      removePinsOnMap();
+    }
     mapPins.appendChild(window.pin.createPinsFragment(advertData));
   }
 
   function removePinsOnMap() {
-    var pins = document.querySelectorAll('.map__pin');
+    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     pins.forEach(function (elem) {
-      if (checkPinNotMain(elem)) {
-        mapPins.removeChild(elem);
-      }
+      mapPins.removeChild(elem);
     });
   }
 
@@ -100,20 +84,24 @@
 
   // переводим карту и форму в активное состояние
   function switchToActiveMode() {
-    advertsData = window.data.adverts;
-    map.classList.remove('map--faded');
-    form.classList.remove('notice__form--disabled');
-    window.form.removeFormDisabled();
+    if (!isMapActive) {
+      isMapActive = true;
+      advertsData = window.data.adverts;
+      map.classList.remove('map--faded');
+      form.classList.remove('notice__form--disabled');
+      window.form.removeFormDisabled();
 
-    // добавляем пины в DOM
-    if (mapPins.childNodes.length <= startingChildNodesLength) {
-      addPinsOnMap(advertsData);
+      // добавляем пины в DOM
+      if (mapPins.childNodes.length <= startingChildNodesLength) {
+        addPinsOnMap(advertsData);
+      }
+      mapFilter.addEventListener('change', onFilterInputChange);
     }
-    mapFilter.addEventListener('change', onFilterInputChange);
   }
 
   // переводит карту и форму  неактивное состояние
   function disableActiveMode() {
+    isMapActive = false;
     map.classList.add('map--faded');
     form.classList.add('notice__form--disabled');
     window.form.addFormDisabled();
@@ -139,7 +127,7 @@
   mainPin.addEventListener('keydown', onMainPinPressEnter);
 
   window.map = {
-    startMap: switchToActiveMode,
+    switchToActiveMode: switchToActiveMode,
     disableActiveMode: disableActiveMode,
     addPinsOnMap: addPinsOnMap,
     removePopup: removePopup

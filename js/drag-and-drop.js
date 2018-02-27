@@ -55,7 +55,7 @@
     }
 
     function onMouseUp(upEvt) {
-      window.map.startMap();
+      window.map.switchToActiveMode();
       upEvt.preventDefault();
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);

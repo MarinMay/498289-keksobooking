@@ -5,15 +5,15 @@
 
   // сортирует массив в случайном порядке
   function sortArray(array) {
-    var m = array.length;
-    var t;
-    var i;
+    var resultIndex = array.length;
+    var currentIndex;
+    var valueResultIndex;
 
-    while (m) {
-      i = Math.floor(Math.random() * m--);
-      t = array[m];
-      array[m] = array[i];
-      array[i] = t;
+    while (resultIndex) {
+      currentIndex = Math.floor(Math.random() * resultIndex--);
+      valueResultIndex = array[resultIndex];
+      array[resultIndex] = array[currentIndex];
+      array[currentIndex] = valueResultIndex;
     }
   }
 
