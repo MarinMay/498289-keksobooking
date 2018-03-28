@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   var MIN_COORDS_Y = 115;
-  var MAX_COORDS_Y = 465;
+  var MAX_COORDS_Y = 650;
   var MIN_COORDS_X = 0;
   var mainPin = document.querySelector('.map__pin--main');
   var maxCoordsX = document.querySelector('.map__pins').offsetWidth;
